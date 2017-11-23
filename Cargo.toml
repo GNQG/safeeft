@@ -1,0 +1,24 @@
+[package]
+name = "safeeft"
+version = "0.0.1"
+authors = ["GNQG"]
+readme = "README.md"
+license = "MIT"
+description = "Safe and branchless error-free transformation algorithms for floating point numbers."
+repository = "https://github.com/GNQG/safeeft"
+keywords = ["math", "number", "float", "eft"]
+categories = ["algorithms"]
+
+[dependencies]
+simd = {version = "^0.2.0", optional = true}
+
+[dev-dependencies]
+num-traits = "^0.1.40"
+rand = "^0.3.18"
+
+[features]
+doc = []
+use-fma = ["simd"]
+
+[patch.crates-io]
+simd = {git = "https://github.com/fsasm/simd", branch = "fma"}
