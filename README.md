@@ -7,35 +7,42 @@ Now supports only `f64`.
 
 ## Benchmark
 
-`$cargo +nightly bench`
+With nightly compiler, execute
 
-If x86 with `fma`,
+`$ cargo +nightly bench`
 
-`$cargo +nightly bench --features use-fma`
+If your CPU has `fma` target-feature,
 
-### `twosum`
+`$ RUSTFLAGS='-C target-feature=+fma' cargo +nightly bench --features use-fma`
+
+### Sample result
+
+* compiler: rustc-1.22.1
+* CPU: Intel Core i5-4570(Haswell)@3.20GHz
+
+#### `twosum`
 
 | algorithm             | time (ns) / operation |
 |-----------------------|-----------------------|
-| `twosum`(not safe)    |                1.8391 |
-| `safetwosum_branch`   |                4.6489 |
-| `safetwosum_straight` |                4.8499 |
-| `safetwosum_fma`      |                3.9599 |
+| `twosum`(not safe)    |                1.7530 |
+| `safetwosum_branch`   |                4.4827 |
+| `safetwosum_straight` |                4.6438 |
+| `safetwosum_fma`      |                2.4749 |
 
-### `split`
+#### `split`
 
 | algorithm                    |  time (ns) / operation |
 |------------------------------|------------------------|
-| `split`(not safe)            |                 0.9141 |
-| `safesplit_branch`(not safe) |                 1.1899 |
-| `safesplit_straight`         |                 3.4384 |
+| `split`(not safe)            |                 0.8915 |
+| `safesplit_branch`(not safe) |                 1.1918 |
+| `safesplit_straight`         |                 3.3454 |
 
-### `twoproduct`
+#### `twoproduct`
 
 | algorithm                 | time (ns) / operation |
 |---------------------------|-----------------------|
-| `twoproduct`(not safe)    |                2.9827 |
-| `safetwoproduct_branch`   |                3.9190 |
-| `safetwoproduct_straight` |               13.5769 |
-| `safetwoproduct_fma`      |                0.9225 |
+| `twoproduct`(not safe)    |                2.9322 |
+| `safetwoproduct_branch`   |                3.7826 |
+| `safetwoproduct_straight` |               12.9883 |
+| `safetwoproduct_fma`      |                0.7125 |
 

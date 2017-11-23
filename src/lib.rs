@@ -31,9 +31,9 @@
 //! 1. D. E. Knuth, "The Art of Computer Programming", vol. 2. Addison-Wesley, Reading, MA, 3rd edition, 1998.
 //! 2. T. J. Dekker, "A Floating-Point Technique for Extending the Available Precision", Numer. Math. 18(3), 224-242, 1971.
 //! 3. M. Kashiwagi, "Emulation of Rounded Arithmetic in Rounding to Nearest(Japanese only)", NAS2014, 2014.
-//! 4. American National Standards Institute and Institute of Electrical and Electronic Engineers, "IEEE Standard for Binary Floating-Point Arithmetic", ANSI/IEEE Standard 754–2008, 2008.
+//! 4. American National Standards Institute and Institute of Electrical and Electronic Engineers, "IEEE Standard for Binary Floating-Point Arithmetic", ANSI/IEEE Standard 754-2008, 2008.
 
-#![cfg_attr(feature = "use-fma", feature(cfg_target_feature))]
+#![cfg_attr(feature = "use-fma", feature(cfg_target_feature,link_llvm_intrinsics))]
 
 mod twosum;
 mod split;

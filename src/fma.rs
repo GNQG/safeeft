@@ -1,10 +1,11 @@
-extern crate simd;
-
-use self::simd::x86::sse2::f64x2;
+#[allow(improper_ctypes)]
+extern "C" {
+    #[link_name = "llvm.fma.f64"]
+    #[inline]
+    fn fma_f64(a: f64, b: f64, c: f64) -> f64;
+}
 
 #[inline]
 pub fn fma(a: f64, b: f64, c: f64) -> f64 {
-    f64x2::new(a, 0.)
-        .fma(f64x2::new(b, 0.), f64x2::new(c, 0.))
-        .extract(0)
+    unsafe { fma_f64(a, b, c) }
 }
