@@ -17,7 +17,7 @@ If your CPU has `fma` target-feature,
 
 ### Sample result
 
-* compiler: rustc-1.22.1
+* compiler: rustc 1.23.0-nightly
 * CPU: Intel Core i5-4570(Haswell)@3.20GHz
 
 #### `twosum`
