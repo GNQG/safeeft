@@ -1,6 +1,6 @@
 #[cfg(feature = "use-fma")]
 #[cfg(target_feature = "fma")]
-use fma::fma;
+use fma::Fma;
 
 #[inline]
 pub fn fasttwosum(x: f64, y: f64) -> (f64, f64) {
@@ -37,11 +37,11 @@ pub fn safetwosum_straight(x: f64, y: f64) -> (f64, f64) {
 #[inline]
 pub fn safetwosum_fma(x: f64, y: f64) -> (f64, f64) {
     let (xx, yy) = (x * 0.5, y * 0.5);
-    let err_uf = fma(-2., xx, x) + fma(-2., yy, y);
+    let err_uf = Fma::fma(-2., xx, x) + Fma::fma(-2., yy, y);
     let (ss, ee) = twosum(xx, yy); // this does not overflow if |x|, |y| < inf
-    let sum = fma(2., ss, err_uf);
-    let err = err_uf - fma(-2., ss, sum);
-    (sum, fma(2., ee, err))
+    let sum = Fma::fma(2., ss, err_uf);
+    let err = err_uf - Fma::fma(-2., ss, sum);
+    (sum, Fma::fma(2., ee, err))
 }
 
 #[cfg(test)]
