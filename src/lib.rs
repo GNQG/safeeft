@@ -25,7 +25,7 @@
 //! With nightly compiler and x86 cpu supporting `fma`, you can accelerate some algorithms
 //! using a `use-fma` feature gate:
 //! 
-//! `$ cargo build --features use-fma`
+//! `$ RUSTFLAGS='-C target-feature=+fma' cargo build --features use-fma`
 //! 
 //! ## References
 //! 1. D. E. Knuth, "The Art of Computer Programming", vol. 2. Addison-Wesley, Reading, MA, 3rd edition, 1998.
