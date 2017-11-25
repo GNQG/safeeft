@@ -2,7 +2,7 @@ use twosum::fasttwosum;
 use split::{split, safesplit_straight};
 #[cfg(feature = "use-fma")]
 #[cfg(target_feature = "fma")]
-use fma::Fma;
+use fma::fma;
 
 #[inline]
 pub fn twoproduct(a: f64, b: f64) -> (f64, f64) {
@@ -44,7 +44,7 @@ pub fn safetwoproduct_straight(a: f64, b: f64) -> (f64, f64) {
 #[inline]
 pub fn safetwoproduct_fma(a: f64, b: f64) -> (f64, f64) {
     let prod = a * b;
-    (prod, Fma::fma(a, b, -prod))
+    (prod, fma(a, b, -prod))
 }
 
 #[cfg(test)]

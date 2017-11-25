@@ -3,6 +3,11 @@ extern "rust-intrinsic" {
     fn fmaf64(a: f64, b: f64, c: f64) -> f64;
 }
 
+#[inline]
+pub fn fma<T: Fma>(a: T, b: T, c: T) -> T {
+    Fma::fma(a,b,c)
+}
+
 pub trait Fma {
     fn fma(a: Self, b: Self, c: Self) -> Self;
 }
