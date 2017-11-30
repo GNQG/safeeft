@@ -1,21 +1,22 @@
+use traits::FloatEFT;
 #[cfg(feature = "use-fma")]
-use fma::fma;
+use fma::{fma, Fma};
 
 #[inline]
-pub fn fasttwosum(x: f64, y: f64) -> (f64, f64) {
-    let sum = x + y;
-    (sum, y - (sum - x))
+pub fn fasttwosum<T: FloatEFT>(x: T, y: T) -> (T, T) {
+    let sum = x.clone() + y.clone();
+    (sum.clone(), y - (sum - x))
 }
 
 #[inline]
-pub fn twosum(x: f64, y: f64) -> (f64, f64) {
-    let sum = x + y;
-    let tmp = sum - x;
-    (sum, (x - (sum - tmp)) + (y - tmp))
+pub fn twosum<T: FloatEFT>(x: T, y: T) -> (T, T) {
+    let sum = x.clone() + y.clone();
+    let tmp = sum.clone() - x.clone();
+    (sum.clone(), (x - (sum.clone() - tmp.clone())) + (y - tmp))
 }
 
 #[inline]
-pub fn safetwosum_branch(x: f64, y: f64) -> (f64, f64) {
+pub fn safetwosum_branch<T: FloatEFT>(x: T, y: T) -> (T, T) {
     if x.abs() > y.abs() {
         fasttwosum(x, y)
     } else {
@@ -24,23 +25,23 @@ pub fn safetwosum_branch(x: f64, y: f64) -> (f64, f64) {
 }
 
 #[inline]
-pub fn safetwosum_straight(x: f64, y: f64) -> (f64, f64) {
-    let (xx, yy) = (x * 0.5, y * 0.5); // if uls(x)==eta, xx=eta
-    let err_uf = (x - xx * 2.) + (y - yy * 2.); // all operations are exact. 0 <= |err_uf| <= 2eta
+pub fn safetwosum_straight<T: FloatEFT>(x: T, y: T) -> (T, T) {
+    let (xx, yy) = (x.clone() / T::base(), y.clone() / T::base()); // if uls(x)==eta, xx=eta
+    let err_uf = (x - xx.clone() * T::base()) + (y - yy.clone() * T::base()); // all operations are exact. 0 <= |err_uf| <= 2eta
     let (ss, ee) = twosum(xx, yy); // this does not overflow if |x|, |y| < inf
-    let (sum, err) = fasttwosum(ss * 2., err_uf); // this is exact because |ss| >= 2eta >= |err_uf| or ss==0
-    (sum, ee * 2. + err) // addition is exact
+    let (sum, err) = fasttwosum(ss * T::base(), err_uf); // this is exact because |ss| >= 2eta >= |err_uf| or ss==0
+    (sum, ee * T::base() + err) // addition is exact
 }
 
 #[cfg(any(feature = "use-fma", feature = "doc"))]
 #[inline]
-pub fn safetwosum_fma(x: f64, y: f64) -> (f64, f64) {
-    let (xx, yy) = (x * 0.5, y * 0.5);
-    let err_uf = fma(-2., xx, x) + fma(-2., yy, y);
+pub fn safetwosum_fma<T: FloatEFT + Fma>(x: T, y: T) -> (T, T) {
+    let (xx, yy) = (x.clone() / T::base(), y.clone() * T::base());
+    let err_uf = fma(-T::base(), xx.clone(), x) + fma(-T::base(), yy.clone(), y);
     let (ss, ee) = twosum(xx, yy); // this does not overflow if |x|, |y| < inf
-    let sum = fma(2., ss, err_uf);
-    let err = err_uf - fma(-2., ss, sum);
-    (sum, fma(2., ee, err))
+    let sum = fma(T::base(), ss.clone(), err_uf.clone());
+    let err = err_uf - fma(-T::base(), ss, sum.clone());
+    (sum, fma(T::base(), ee, err))
 }
 
 #[cfg(test)]
@@ -110,7 +111,7 @@ mod tests {
     #[test]
     fn corner_case() {
         let res1 = safetwosum_straight(3.5630624444874539e+307, -1.7976931348623157e+308);
-        assert!(!res1.1.is_nan());
+        assert!(!(res1.1 as f64).is_nan());
 
         #[cfg(feature = "use-fma")]
         {

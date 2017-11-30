@@ -35,8 +35,11 @@
 
 #![cfg_attr(feature = "use-fma", feature(cfg_target_feature,intrinsics))]
 
+extern crate core;
 #[cfg(feature = "use-fma")]
 extern crate fma;
+
+mod traits;
 
 mod twosum;
 mod split;
