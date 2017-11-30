@@ -23,7 +23,7 @@ impl<T: Float> FloatEFT for T {
     }
     #[inline]
     fn split_coef() -> Self {
-        Self::one() / (Self::epsilon() / (Self::one() + Self::one())).sqrt() + Self::one()
+        ((Self::one() / Self::epsilon()) * Self::base() * Self::base()).sqrt() + Self::one()
     }
     #[inline]
     fn epsilon() -> Self {
@@ -34,11 +34,11 @@ impl<T: Float> FloatEFT for T {
         Self::min_positive_value()
     }
     #[inline]
-    fn one() -> Self{
+    fn one() -> Self {
         Self::one()
     }
     #[inline]
-    fn base() -> Self{
+    fn base() -> Self {
         Self::one() + Self::one()
     }
 }

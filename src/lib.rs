@@ -36,7 +36,7 @@
 #![cfg_attr(feature = "use-fma", feature(cfg_target_feature,intrinsics))]
 
 extern crate core;
-#[cfg(feature = "use-fma")]
+#[cfg(any(feature = "use-fma", feature = "doc"))]
 extern crate fma;
 
 mod traits;
@@ -44,6 +44,8 @@ mod traits;
 mod twosum;
 mod split;
 mod twoprod;
+
+pub use traits::FloatEFT;
 
 pub use twosum::*;
 pub use split::*;

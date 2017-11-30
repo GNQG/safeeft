@@ -1,5 +1,5 @@
 use traits::FloatEFT;
-#[cfg(feature = "use-fma")]
+#[cfg(any(feature = "use-fma", feature = "doc"))]
 use fma::{fma, Fma};
 
 #[inline]
@@ -36,7 +36,7 @@ pub fn safetwosum_straight<T: FloatEFT>(x: T, y: T) -> (T, T) {
 #[cfg(any(feature = "use-fma", feature = "doc"))]
 #[inline]
 pub fn safetwosum_fma<T: FloatEFT + Fma>(x: T, y: T) -> (T, T) {
-    let (xx, yy) = (x.clone() / T::base(), y.clone() * T::base());
+    let (xx, yy) = (x.clone() / T::base(), y.clone() / T::base());
     let err_uf = fma(-T::base(), xx.clone(), x) + fma(-T::base(), yy.clone(), y);
     let (ss, ee) = twosum(xx, yy); // this does not overflow if |x|, |y| < inf
     let sum = fma(T::base(), ss.clone(), err_uf.clone());

@@ -1,36 +1,36 @@
-use std::f64;
+use traits::FloatEFT;
 
 #[inline]
-pub fn split(a: f64) -> (f64, f64) {
-    let tmp = a * (2f64.powi(27) + 1.);
-    let x = tmp - (tmp - a);
-    (x, a - x)
+pub fn split<T: FloatEFT>(a: T) -> (T, T) {
+    let tmp = a.clone() * T::split_coef();
+    let x = tmp.clone() - (tmp - a.clone());
+    (x.clone(), a - x)
 }
 
 #[inline]
-pub fn safesplit_branch(a: f64) -> (f64, f64) {
+pub fn safesplit_branch<T: FloatEFT>(a: T) -> (T, T) {
     // unsafe when usp(a) >= 2^997 (a >= 0x1.FFFFFF8000000p+1022) <-- ?????
     // theoritically split(DOUBLE_MAX) == (succ(DOUBLE_MAX)==2^1023, some negative float)
-    if a > 1. {
-        let t = split(a * 2f64.powi(-50));
-        (t.0 * 2f64.powi(50), t.1 * 2f64.powi(50))
+    if a > T::one() {
+        let t = split(a * T::epsilon());
+        (t.0 / T::epsilon(), t.1 / T::epsilon())
     } else {
         split(a)
     }
 }
 
 #[inline]
-pub fn safesplit_straight(a: f64) -> (f64, f64, f64) {
+pub fn safesplit_straight<T: FloatEFT>(a: T) -> (T, T, T) {
     // Returns a_high, a_low, a_err which satisfy a == 2 * a_high + 2 * a_low + a_err.
     // 2 * a_high may overflow, so to get a, you should write a_high + (a_high + (2.*a_low + a_err))
-    let aa = a * 0.5;
-    let err = a - aa * 2.; // if usp(a) == 2^-1074, err == 2^-1074, else 0.
+    let aa = a.clone() / T::base();
+    let err = a - aa.clone() * T::base(); // if usp(a) == 2^-1074, err == 2^-1074, else 0.
 
-    let step = (((aa + f64::MIN_POSITIVE) - aa) * 2f64.powi(1000)) * 2f64.powi(200) +
-               2f64.powi(-52);
-    let split_shift = split(aa * step);
+    let step = (((aa.clone() + T::min_pos()) - aa.clone()) / T::min_pos()) /
+               (T::epsilon() * T::epsilon() * T::epsilon()) + T::epsilon();
+    let split_shift = split(aa * step.clone());
 
-    (split_shift.0 / step, split_shift.1 / step, err)
+    (split_shift.0 / step.clone(), split_shift.1 / step, err)
 }
 
 #[cfg(test)]
@@ -97,6 +97,7 @@ mod tests {
             }
 
             let (sh_prop, sl_prop) = (s.0.integer_decode(), s.1.integer_decode());
+            println!("{:e}, {:b}, {:b}", s.0, sh_prop.0, sh_prop.1);
             assert!((sh_prop.0 & 0x7FFFFFF) == 0);
             assert!((sl_prop.0 & 0x7FFFFFF) == 0);
 
