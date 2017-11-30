@@ -1,7 +1,7 @@
 # safeeft
 Safe and branchless error-free transformation algorithms for floating point numbers.
 
-Now supports only `f64`.
+Now supports types which impl `num_traits::Float` and size of bits of its significand is odd (Because `Float` does not offer its size).
 
 [Documents](https://docs.rs/safeeft)
 
@@ -13,7 +13,9 @@ With nightly compiler, execute
 
 If your CPU has `fma` target-feature,
 
-`$ RUSTFLAGS='-C target-feature=+fma' cargo +nightly bench --features use-fma`
+`$ RUSTFLAGS='-C target-cpu=native' cargo +nightly bench --features use-fma`
+
+If your CPU does not have `fma` and compile and run with this command, `***_fma` will work very slowly due to software emulation of `fma`.
 
 ### Sample result
 
