@@ -35,13 +35,12 @@
 
 #![cfg_attr(feature = "use-fma", feature(cfg_target_feature,intrinsics))]
 
+#[cfg(feature = "use-fma")]
+extern crate fma;
+
 mod twosum;
 mod split;
 mod twoprod;
-
-#[cfg(feature = "use-fma")]
-#[cfg(target_feature = "fma")]
-mod fma;
 
 pub use twosum::*;
 pub use split::*;

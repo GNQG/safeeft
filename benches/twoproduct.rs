@@ -7,7 +7,6 @@ extern crate rand;
 
 use safeeft::{twoproduct, safetwoproduct_branch, safetwoproduct_straight};
 #[cfg(feature = "use-fma")]
-#[cfg(target_feature = "fma")]
 use safeeft::safetwoproduct_fma;
 use rand::Rng;
 
@@ -58,7 +57,6 @@ fn bench_safetwoproduct_straight(b: &mut test::Bencher) {
 }
 
 #[cfg(feature = "use-fma")]
-#[cfg(target_feature = "fma")]
 #[bench]
 fn bench_safetwoproduct_fma(b: &mut test::Bencher) {
     let mut rng = rand::thread_rng();

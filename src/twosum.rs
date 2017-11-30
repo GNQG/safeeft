@@ -1,5 +1,4 @@
 #[cfg(feature = "use-fma")]
-#[cfg(target_feature = "fma")]
 use fma::fma;
 
 #[inline]
@@ -33,7 +32,7 @@ pub fn safetwosum_straight(x: f64, y: f64) -> (f64, f64) {
     (sum, ee * 2. + err) // addition is exact
 }
 
-#[cfg(any(all(feature = "use-fma",target_feature = "fma"), feature = "doc"))]
+#[cfg(any(feature = "use-fma", feature = "doc"))]
 #[inline]
 pub fn safetwosum_fma(x: f64, y: f64) -> (f64, f64) {
     let (xx, yy) = (x * 0.5, y * 0.5);
@@ -63,7 +62,6 @@ mod tests {
             assert!(((a1 == a2) && (b1 == b2)) || ((a1 == a2) && a1.is_infinite()));
 
             #[cfg(feature = "use-fma")]
-            #[cfg(target_feature = "fma")]
             {
                 let (a2, b2) = safetwosum_fma(l, r);
                 assert!(((a1 == a2) && (b1 == b2)) || ((a1 == a2) && a1.is_infinite()));
@@ -83,7 +81,6 @@ mod tests {
             assert!(((a1 == a2) && (b1 == b2)) || ((a1 == a2) && a1.is_infinite()));
 
             #[cfg(feature = "use-fma")]
-            #[cfg(target_feature = "fma")]
             {
                 let (a2, b2) = safetwosum_fma(l, r);
                 assert!(((a1 == a2) && (b1 == b2)) || ((a1 == a2) && a1.is_infinite()));
@@ -103,7 +100,6 @@ mod tests {
             assert!((a1 == a2) && (b1 == b2));
 
             #[cfg(feature = "use-fma")]
-            #[cfg(target_feature = "fma")]
             {
                 let (a2, b2) = safetwosum_fma(l, r);
                 assert!((a1 == a2) && (b1 == b2));
@@ -117,7 +113,6 @@ mod tests {
         assert!(!res1.1.is_nan());
 
         #[cfg(feature = "use-fma")]
-        #[cfg(target_feature = "fma")]
         {
             let res2 = safetwosum_fma(3.5630624444874539e+307, -1.7976931348623157e+308);
             assert!(res1 == res2);

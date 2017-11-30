@@ -1,7 +1,6 @@
 use twosum::fasttwosum;
 use split::{split, safesplit_straight};
 #[cfg(feature = "use-fma")]
-#[cfg(target_feature = "fma")]
 use fma::fma;
 
 #[inline]
@@ -40,7 +39,7 @@ pub fn safetwoproduct_straight(a: f64, b: f64) -> (f64, f64) {
      a * b3 + b * a3)
 }
 
-#[cfg(any(all(feature = "use-fma",target_feature = "fma"), feature = "doc"))]
+#[cfg(any(feature = "use-fma", feature = "doc"))]
 #[inline]
 pub fn safetwoproduct_fma(a: f64, b: f64) -> (f64, f64) {
     let prod = a * b;
@@ -69,7 +68,6 @@ mod tests {
             assert!((a1 == a2) && (b1 == b2));
 
             #[cfg(feature = "use-fma")]
-            #[cfg(target_feature = "fma")]
             {
                 let (a2, b2) = safetwoproduct_fma(l, r);
                 assert!((a1 == a2) && (b1 == b2));
@@ -90,7 +88,6 @@ mod tests {
             assert!((a1 == a2) && (b1 == b2));
 
             #[cfg(feature = "use-fma")]
-            #[cfg(target_feature = "fma")]
             {
                 let (a2, b2) = safetwoproduct_fma(l, r);
                 assert!((a1 == a2) && (b1 == b2));
@@ -106,7 +103,6 @@ mod tests {
         assert!((a1 == a2) && (b1 == b2));
 
         #[cfg(feature = "use-fma")]
-        #[cfg(target_feature = "fma")]
         {
             let (a2, b2) = safetwoproduct_fma(l, r);
             assert!((a1 == a2) && (b1 == b2));
@@ -126,7 +122,6 @@ mod tests {
             assert!((a1 == a2) && (b1 == b2));
 
             #[cfg(feature = "use-fma")]
-            #[cfg(target_feature = "fma")]
             {
                 let (a2, b2) = safetwoproduct_fma(l, r);
                 assert!((a1 == a2) && (b1 == b2));

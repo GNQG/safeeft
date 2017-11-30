@@ -7,7 +7,6 @@ extern crate rand;
 
 use safeeft::{twosum, safetwosum_branch, safetwosum_straight};
 #[cfg(feature = "use-fma")]
-#[cfg(target_feature = "fma")]
 use safeeft::safetwosum_fma;
 use rand::Rng;
 
@@ -58,7 +57,6 @@ fn bench_safetwosum_straight(b: &mut test::Bencher) {
 }
 
 #[cfg(feature = "use-fma")]
-#[cfg(target_feature = "fma")]
 #[bench]
 fn bench_safetwosum_fma(b: &mut test::Bencher) {
     let mut rng = rand::thread_rng();
