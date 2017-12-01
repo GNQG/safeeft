@@ -1,44 +1,16 @@
 extern crate num_traits;
-use core::ops::{Neg, Add, Sub, Mul, Div};
-use core::cmp::PartialOrd;
-use core::marker::Sized;
-use self::num_traits::Float;
+extern crate float_traits;
+use core::clone::Clone;
+use self::num_traits::One;
+use self::float_traits::{IEEE754Float, BinaryFloat};
 
-pub trait FloatEFT
-    : Neg<Output = Self> + Add<Self, Output = Self> + Sub<Self, Output = Self> +
-    Mul<Self, Output = Self> + Div<Self, Output = Self> +
-    PartialOrd + Clone + Sized {
-        fn abs(&self) -> Self;
-        fn split_coef() -> Self;
-        fn epsilon() -> Self;
-        fn min_pos() -> Self;
-        fn one() -> Self;
-        fn base() -> Self;
-}
-
-impl<T: Float> FloatEFT for T {
-    #[inline]
-    fn abs(&self) -> Self {
-        self.clone().abs()
-    }
+pub trait FloatEFT: IEEE754Float + Clone {
     #[inline]
     fn split_coef() -> Self {
-        ((Self::one() / Self::epsilon()) * Self::base() * Self::base()).sqrt() + Self::one()
-    }
-    #[inline]
-    fn epsilon() -> Self {
-        Self::epsilon()
-    }
-    #[inline]
-    fn min_pos() -> Self {
-        Self::min_positive_value()
-    }
-    #[inline]
-    fn one() -> Self {
-        Self::one()
-    }
-    #[inline]
-    fn base() -> Self {
-        Self::one() + Self::one()
+        let int_one = <Self as BinaryFloat>::Expo::one();
+        let int_two = <Self as BinaryFloat>::Expo::one() + <Self as BinaryFloat>::Expo::one();
+        Self::two_powi((Self::bits() + int_one) / int_two) + Self::one()
     }
 }
+
+impl<T: IEEE754Float + Clone> FloatEFT for T {}

@@ -15,15 +15,16 @@ pub fn twoproduct<T: FloatEFT>(a: T, b: T) -> (T, T) {
 #[inline]
 pub fn safetwoproduct_branch<T: FloatEFT>(a: T, b: T) -> (T, T) {
     let prod = a.clone() * b.clone();
-    let ((a1, a2), (b1, b2)) = if a.abs() >= T::one() / (T::min_pos() / T::epsilon()) {
+    let ((a1, a2), (b1, b2)) = if a.clone().abs() >=
+                                  T::one() / (T::min_positive() / T::epsilon()) {
         (split(a * T::epsilon()), split(b / T::epsilon()))
-    } else if b.abs() >= (T::min_pos() / T::epsilon()) {
+    } else if b.clone().abs() >= (T::min_positive() / T::epsilon()) {
         (split(a / T::epsilon()), split(b * T::epsilon()))
     } else {
         (split(a), split(b))
     };
-    let tmp = if prod.abs() > T::base() / T::min_pos() {
-        ((prod.clone() / T::base()) - (a1.clone() / T::base()) * b1.clone()) * T::base()
+    let tmp = if prod.clone().abs() > T::radix() / T::min_positive() {
+        ((prod.clone() / T::radix()) - (a1.clone() / T::radix()) * b1.clone()) * T::radix()
     } else {
         prod.clone() - a1.clone() * b1.clone()
     };
@@ -35,12 +36,12 @@ pub fn safetwoproduct_straight<T: FloatEFT>(a: T, b: T) -> (T, T) {
     let prod = a.clone() * b.clone();
     let ((a1, a2, a3), (b1, b2, b3)) = (safesplit_straight(a.clone()),
                                         safesplit_straight(b.clone()));
-    let two_a1b1 = T::base() * (a1.clone() * b1.clone());
+    let two_a1b1 = T::radix() * (a1.clone() * b1.clone());
     let mid = fasttwosum(prod.clone(), -two_a1b1.clone());
     (prod,
-     ((T::base() * T::base() * a2.clone()) * b2.clone() -
-      ((((mid.0 - two_a1b1) + mid.1) - (T::base() * T::base() * b2) * a1) -
-       (T::base() * T::base() * a2) * b1)) + a * b3 + b * a3)
+     ((T::radix() * T::radix() * a2.clone()) * b2.clone() -
+      ((((mid.0 - two_a1b1) + mid.1) - (T::radix() * T::radix() * b2) * a1) -
+       (T::radix() * T::radix() * a2) * b1)) + a * b3 + b * a3)
 }
 
 #[cfg(any(feature = "use-fma", feature = "doc"))]

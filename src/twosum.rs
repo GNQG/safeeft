@@ -17,7 +17,7 @@ pub fn twosum<T: FloatEFT>(x: T, y: T) -> (T, T) {
 
 #[inline]
 pub fn safetwosum_branch<T: FloatEFT>(x: T, y: T) -> (T, T) {
-    if x.abs() > y.abs() {
+    if x.clone().abs() > y.clone().abs() {
         fasttwosum(x, y)
     } else {
         fasttwosum(y, x)
@@ -26,22 +26,22 @@ pub fn safetwosum_branch<T: FloatEFT>(x: T, y: T) -> (T, T) {
 
 #[inline]
 pub fn safetwosum_straight<T: FloatEFT>(x: T, y: T) -> (T, T) {
-    let (xx, yy) = (x.clone() / T::base(), y.clone() / T::base()); // if uls(x)==eta, xx=eta
-    let err_uf = (x - xx.clone() * T::base()) + (y - yy.clone() * T::base()); // all operations are exact. 0 <= |err_uf| <= 2eta
+    let (xx, yy) = (x.clone() / T::radix(), y.clone() / T::radix()); // if uls(x)==eta, xx=eta
+    let err_uf = (x - xx.clone() * T::radix()) + (y - yy.clone() * T::radix()); // all operations are exact. 0 <= |err_uf| <= 2eta
     let (ss, ee) = twosum(xx, yy); // this does not overflow if |x|, |y| < inf
-    let (sum, err) = fasttwosum(ss * T::base(), err_uf); // this is exact because |ss| >= 2eta >= |err_uf| or ss==0
-    (sum, ee * T::base() + err) // addition is exact
+    let (sum, err) = fasttwosum(ss * T::radix(), err_uf); // this is exact because |ss| >= 2eta >= |err_uf| or ss==0
+    (sum, ee * T::radix() + err) // addition is exact
 }
 
 #[cfg(any(feature = "use-fma", feature = "doc"))]
 #[inline]
 pub fn safetwosum_fma<T: FloatEFT + Fma>(x: T, y: T) -> (T, T) {
-    let (xx, yy) = (x.clone() / T::base(), y.clone() / T::base());
-    let err_uf = fma(-T::base(), xx.clone(), x) + fma(-T::base(), yy.clone(), y);
+    let (xx, yy) = (x.clone() / T::radix(), y.clone() / T::radix());
+    let err_uf = fma(-T::radix(), xx.clone(), x) + fma(-T::radix(), yy.clone(), y);
     let (ss, ee) = twosum(xx, yy); // this does not overflow if |x|, |y| < inf
-    let sum = fma(T::base(), ss.clone(), err_uf.clone());
-    let err = err_uf - fma(-T::base(), ss, sum.clone());
-    (sum, fma(T::base(), ee, err))
+    let sum = fma(T::radix(), ss.clone(), err_uf.clone());
+    let err = err_uf - fma(-T::radix(), ss, sum.clone());
+    (sum, fma(T::radix(), ee, err))
 }
 
 #[cfg(test)]
