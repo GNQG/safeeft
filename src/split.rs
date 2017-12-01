@@ -23,10 +23,10 @@ pub fn safesplit_branch<T: FloatEFT>(a: T) -> (T, T) {
 pub fn safesplit_straight<T: FloatEFT>(a: T) -> (T, T, T) {
     // Returns a_high, a_low, a_err which satisfy a == 2 * a_high + 2 * a_low + a_err.
     // 2 * a_high may overflow, so to get a, you should write a_high + (a_high + (2.*a_low + a_err))
-    let aa = a.clone() / T::base();
-    let err = a - aa.clone() * T::base(); // if usp(a) == 2^-1074, err == 2^-1074, else 0.
+    let aa = a.clone() / T::radix();
+    let err = a - aa.clone() * T::radix(); // if usp(a) == 2^-1074, err == 2^-1074, else 0.
 
-    let step = (((aa.clone() + T::min_pos()) - aa.clone()) / T::min_pos()) /
+    let step = (((aa.clone() + T::min_positive()) - aa.clone()) / T::min_positive()) /
                (T::epsilon() * T::epsilon() * T::epsilon()) + T::epsilon();
     let split_shift = split(aa * step.clone());
 
