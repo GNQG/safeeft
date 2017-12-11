@@ -26,22 +26,27 @@ pub fn safetwosum_branch<T: FloatEFT>(x: T, y: T) -> (T, T) {
 
 #[inline]
 pub fn safetwosum_straight<T: FloatEFT>(x: T, y: T) -> (T, T) {
+    let s = x.clone() + y.clone();
     let (xx, yy) = (x.clone() / T::radix(), y.clone() / T::radix()); // if uls(x)==eta, xx=eta
     let err_uf = (x - xx.clone() * T::radix()) + (y - yy.clone() * T::radix()); // all operations are exact. 0 <= |err_uf| <= 2eta
     let (ss, ee) = twosum(xx, yy); // this does not overflow if |x|, |y| < inf
-    let (sum, err) = fasttwosum(ss * T::radix(), err_uf); // this is exact because |ss| >= 2eta >= |err_uf| or ss==0
-    (sum, ee * T::radix() + err) // addition is exact
+    // 2 * (ss + ee) + err_uf = x + y
+    let err_h = T::radix() * ss - s.clone(); // exact
+    // err_h + 2. * ee + err_uf = x + y - s
+    (s, (T::radix() * ee + err_h) + err_uf)
 }
 
 #[cfg(any(feature = "use-fma", feature = "doc"))]
 #[inline]
 pub fn safetwosum_fma<T: FloatEFT + Fma>(x: T, y: T) -> (T, T) {
-    let (xx, yy) = (x.clone() / T::radix(), y.clone() / T::radix());
+    let s = x.clone() + y.clone();
+    let (xx, yy) = (x.clone() / T::radix(), y.clone() / T::radix()); // if uls(x)==eta, xx=eta
     let err_uf = fma(-T::radix(), xx.clone(), x) + fma(-T::radix(), yy.clone(), y);
     let (ss, ee) = twosum(xx, yy); // this does not overflow if |x|, |y| < inf
-    let sum = fma(T::radix(), ss.clone(), err_uf.clone());
-    let err = err_uf - fma(-T::radix(), ss, sum.clone());
-    (sum, fma(T::radix(), ee, err))
+    // 2 * (ss + ee) + err_uf = x + y
+    let err_h = fma(T::radix(), ss, -s.clone()); // exact
+    // err_h + 2. * ee + err_uf = x + y - s
+    (s, fma(T::radix(), ee, err_h) + err_uf)
 }
 
 #[cfg(test)]
