@@ -10,6 +10,10 @@ use safeeft::{twoproduct, safetwoproduct_branch, safetwoproduct_straight};
 use safeeft::safetwoproduct_fma;
 use rand::Rng;
 
+fn gen_f64(rng: &mut rand::ThreadRng) -> f64 {
+    (rng.next_f64()+1.) * 2f64.powi(rng.gen_range(-25, 25))
+        * ((rng.gen_range::<i16>(0, 2) * 2 - 1) as f64)
+}
 
 #[bench]
 fn bench_twoproduct(b: &mut test::Bencher) {
@@ -17,8 +21,8 @@ fn bench_twoproduct(b: &mut test::Bencher) {
     let mut l = [0.; 10000];
     let mut r = [0.; 10000];
     for i in 0..10000 {
-        l[i] = rng.gen();
-        r[i] = rng.gen();
+        l[i] = gen_f64(&mut rng);
+        r[i] = gen_f64(&mut rng);
     }
 
     b.iter(|| for (f1, f2) in l.into_iter().zip(r.into_iter()) {
@@ -32,8 +36,8 @@ fn bench_safetwoproduct_branch(b: &mut test::Bencher) {
     let mut l = [0.; 10000];
     let mut r = [0.; 10000];
     for i in 0..10000 {
-        l[i] = rng.gen();
-        r[i] = rng.gen();
+        l[i] = gen_f64(&mut rng);
+        r[i] = gen_f64(&mut rng);
     }
 
     b.iter(|| for (f1, f2) in l.into_iter().zip(r.into_iter()) {
@@ -47,8 +51,8 @@ fn bench_safetwoproduct_straight(b: &mut test::Bencher) {
     let mut l = [0.; 10000];
     let mut r = [0.; 10000];
     for i in 0..10000 {
-        l[i] = rng.gen();
-        r[i] = rng.gen();
+        l[i] = gen_f64(&mut rng);
+        r[i] = gen_f64(&mut rng);
     }
 
     b.iter(|| for (f1, f2) in l.into_iter().zip(r.into_iter()) {
@@ -63,8 +67,8 @@ fn bench_safetwoproduct_fma(b: &mut test::Bencher) {
     let mut l = [0.; 10000];
     let mut r = [0.; 10000];
     for i in 0..10000 {
-        l[i] = rng.gen();
-        r[i] = rng.gen();
+        l[i] = gen_f64(&mut rng);
+        r[i] = gen_f64(&mut rng);
     }
 
     b.iter(|| for (f1, f2) in l.into_iter().zip(r.into_iter()) {
